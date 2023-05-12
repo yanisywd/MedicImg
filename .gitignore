@@ -1,0 +1,1 @@
+*.pyc\n*~\n/db.sqlite3\n/__pycache__\nmyvenv/\n.DS_Store\n/media
