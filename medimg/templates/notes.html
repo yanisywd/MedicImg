@@ -1,0 +1,227 @@
+{% extends 'basic.html' %}
+{% load custom_tags %}
+
+{% block content %}
+  <h1>Notes</h1>
+
+  <form method="get" class="form-inline ">
+    <div class="form-group ">
+      <label for="etudiant">Filtrer par étudiant :</label>
+      <select name="etudiant" id="etudiant" class="form-control">
+        <option value="">Sélectionner un étudiant</option>
+        {% for etudiant in etudiants %}
+        <option value="{{ etudiant.id }}" {% if etudiant.id == etudiant_filter %}selected{% endif %}>{{ etudiant.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  
+    <div class="form-group">
+      <label for="quiz">Filtrer par quiz :</label>
+      <select name="quiz" id="quiz" class="form-control">
+        <option value="">Sélectionner un quiz</option>
+        {% for quiz in quizzes %}
+        <option value="{{ quiz.name }}" {% if quiz.name == quiz_filter %}selected{% endif %}>{{ quiz.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  
+    <div class="form-group">
+      <label for="note">Filtrer par note :</label>
+      <select name="note" id="note" class="form-control">
+          <option value="">Toutes les notes</option>
+          <option value="meilleures" {% if note_filter == 'meilleures' %}selected{% endif %}>Meilleures notes</option>
+          <option value="pires" {% if note_filter == 'pires' %}selected{% endif %}>Pires notes</option>
+      </select>
+  </div>
+  <div class="form-group mt-3">
+    <button type="submit" class="btn btn-primary ml-2">Filtrer</button>
+  </div>
+
+   
+  </form>
+  
+  {% if notes %}
+  <table class="table custom-table">
+    <thead>
+      <tr>
+        <th>Quiz</th>
+        <th>Etudiant</th>
+        <th>Note Finale</th>
+        <th>Réponses</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for note in notes %}
+      <tr>
+        <td>{{ note.quiz.name }}</td>
+        <td>{{ note.etudiant.name }}</td>
+        <td>{{ note.note }}/{{ note.quiz.total }}</td>
+        <td>
+          <div class="hidden-response" data-response="{{ note.id }}">
+            <button class="btn btn-info btn-sm">Afficher les réponses</button>
+          </div>
+          <div class="response-details" id="response-details-{{ note.id }}" style="display: none;">
+            {% for reponse in reponses %}
+              {% if reponse.etudiant.id == note.etudiant.id and reponse.question.quiz.id == note.quiz.id %}
+              <div style="border: 1px solid #ccc; border-radius: 4px; padding: 10px; margin-bottom: 5px; max-width: 80%;">
+                <p>{{reponse.date}}</p>
+                <div style="font-weight: bold; margin-bottom: 5px;">Question : {{ reponse.question.text }}</div>
+                <div style="margin-bottom: 5px;">Réponse choisie : {{ reponse.reponse }}</div>
+                {% if reponse.correct %}
+                  <div style="color: #4CAF50;">Statut : Correct</div>
+                {% else %}
+                  <div style="color: #F44336;">Statut : Incorrect - La bonne réponse est : {{ reponse.question.correct_answer }}</div>
+                {% endif %}
+              </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  {% else %}
+  <p>Aucune note n'a été trouvée.</p>
+  {% endif %}
+  <script>
+    document.querySelectorAll('.hidden-response').forEach(function(element) {
+      element.addEventListener('click', function() {
+        const responseId = element.getAttribute('data-response');
+        const responseDetails = document.getElementById('response-details-' + responseId);
+        responseDetails.style.display = responseDetails.style.display === 'none' ? 'block' : 'none';
+      });
+    });
+  </script>
+  <script>
+		var today = new Date(); // Crée un objet Date avec la date et l'heure actuelles
+		var dateElement = document.getElementById("date"); // Récupère l'élément HTML où afficher la date
+		dateElement.innerHTML = today.toLocaleDateString(); // Affiche la date dans le format local de l'utilisateur
+	</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .custom-table {
+    border-collapse: separate;
+    border-spacing: 0 1rem;
+  }
+
+  .custom-table thead th {
+    background-color: #1c1e2a;
+    color: white;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid #1c1e2a;
+  }
+
+  .custom-table tbody tr {
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+  }
+
+  .custom-table tbody tr td {
+    padding: 0.75rem 1rem;
+  }
+</style>
+
+  <style>
+    .form-inline {
+      display: flex;
+      justify-content: flex-start;
+    }
+    
+    button.btn {
+      margin-left: 10px;
+    }
+    .text-success {
+      color: #28a745;
+  }
+
+  .text-danger {
+      color: #dc3545;
+  }
+
+    /* Styles pour le tableau */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    table th,
+    table td {
+      padding: 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    table td {
+      border-bottom: 1px solid #ddd;
+      font-size: 16px;
+      color: #444;
+    }
+
+    table tr:hover td {
+      background-color: #f5f5f5;
+    }
+
+    /* Styles pour le formulaire */
+    .form-group {
+      margin-right: 10px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    input.form-control {
+      width: 200px;
+    }
+
+    button.btn {
+      margin-top: 8px;
+    }
+
+    /* Styles pour le titre de chaque quiz */
+    h3 {
+      background-color: #f2f2f2;
+      padding: 8px;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    /* Styles pour la table des réponses */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    table th,
+    table td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    table td {
+      border-bottom: 1px solid #ddd;
+      font-size: 14px;
+      color: #444;
+    }
+
+    table tr:hover td {
+      background-color: #f5f5f5;
+    }
+  </style>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'basic.html' %} 
+{% load static %} 
+{% block content %}
+
+<main class="main-content border-radius-lg p-3">
+    <h1 class="mb-4">Quizzes</h1>
+    {% if quizzes %}
+        <div class="table-responsive">
+            <table class="table table-hover custom-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Module</th>
+                        <th>nombre de questions</th>
+                        <th>Professeur</th>
+                        <th>Durée</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quiz in quizzes %}
+                    {% comment %} afficher uniquement les quiz que le professeur connecté a créé {% endcomment %}
+                    {% if quiz.professeur == request.user %}
+                    <tr>
+                        <td>{{ quiz.name }}</td>
+                        <td>{{ quiz.module }}</td>
+                        <td>{{ quiz.questions.count }}</td>
+                        <td>{{ quiz.professeur.username }}</td>
+                        <td>{{ quiz.duration }} min</td>
+                        <td class="action-column d-flex justify-content-between">
+                            <a href="{% url 'add_question' quiz.pk %}" class="btn btn-icon btn-secondary"><i class="fas fa-plus"></i></a>
+                            <form method="POST" action="{% url 'update_quiz' quiz.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-icon btn-primary"><i class="fas fa-pencil-alt"></i></button>
+                            </form>
+                            <form method="POST" action="{% url 'delete_quiz' quiz.pk %}" class="delete-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-icon btn-danger"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                            <form method="POST" action="{% url 'unlock_quiz' quiz.pk %}">
+                                {% csrf_token %}
+                                <select name="student_id" class="form-select">
+                                    {% for student in students %}
+                                    <option value="{{ student.pk }}">{{ student.user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-icon btn-warning"><i class="fas fa-unlock"></i></button>
+                            </form>
+                            <form method="POST" action="{% url 'unlock_quiz_all' quiz.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-icon btn-warning"><i class="fas fa-unlock"></i> Débloquer pour tous</button>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">No quizzes yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if quizzes.has_other_pages %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if quizzes.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ quizzes.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                {% endif %}
+
+                {% for i in quizzes.paginator.page_range %}
+                {% if quizzes.number == i %}
+                <li class="page-item active"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+                {% endfor %}
+
+                {% if quizzes.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ quizzes.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link"</span></li>
+                {% endif %}
+                </ul>
+                </nav>
+                {% endif %}
+                {% else %}
+                <p>No quizzes yet.</p>
+                {% endif %}
+                <h2 class="mt-4 mb-3">Add a Quiz</h2>
+                <form method="post" class="border p-3">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary mt-3">Create Quiz</button>
+                </form>
+                </main>
+                {% endblock %}

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz interactif</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+
+    .main-content {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .quiz-title {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 1.5rem;
+    }
+
+    .quiz-step {
+      display: none;
+    }
+
+    .quiz-step.active {
+      display: block;
+    }
+
+    .question-text {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .answer-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 1rem;
+    }
+
+    .answer-list li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .answer-input {
+      display: none;
+    }
+
+    .answer-input + label {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      padding: 0.5rem;
+      border: 2px solid #ccc;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .answer-input:checked + label {
+      background-color: #008CBA;
+      color: #fff;
+      border-color: #008CBA;
+    }
+
+    .answer-input + label:before {
+      content: '';
+      display: inline-block;
+      margin-right: 1rem;
+      width: 1rem;
+      height: 1rem;
+      background-color: #fff;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+    }
+
+    .answer-input:checked + label:before {
+      background-color: #008CBA;
+      border-color: #008CBA;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .button-container button {
+      padding: 0.5rem 1rem;
+      font-size: 1.2rem;
+      border-radius: 0.5rem;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .button-container button:hover {
+      background-color: #008CBA;
+      color: #fff;
+    }
+    .button-container button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    
+    .fa-arrow-left,
+    .fa-arrow-right {
+      margin-right: 0.5rem;
+    }
+    
+    .quiz-status {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+    .quiz-image {
+      width: 400px;
+      height: 300px;
+      object-fit: cover;
+      transition: transform 0.3s ease; /* Ajoutez une transition pour un effet d'agrandissement fluide. */
+    }
+    
+    /* Ajoutez cette règle pour agrandir l'image lors du survol avec le curseur. */
+    .quiz-image:hover {
+      transform: scale(1.6); /* Ajustez la valeur pour modifier l'agrandissement (1.2 = 120% de la taille d'origine). */
+    }
+    .question-container {
+      background-color: #008CBA; /* Couleur d'arrière-plan de la bulle, vous pouvez choisir une couleur différente si vous le souhaitez */
+      color: #ffffff; /* Couleur du texte de la question */
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .question-text {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin: 0; /* Supprimez la marge inférieure pour éviter un espacement supplémentaire à l'intérieur de la bulle */
+    }
+    .timer {
+      text-align: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    
+    
+    
+      </style>
+    </head>
+    <body>
+      <main class="main-content" id="main-content">
+        <h1 class="quiz-title">{{ quiz.name }}</h1>
+        <div id="timer" class="timer"></div>
+
+        <div class="quiz-status"></div>
+        <form method="post" action="{% url 'quiz_submit' quiz.id %}" id="quiz-form">
+          {% csrf_token %}
+          {% for question in questions %}
+    <div class="quiz-step{% if forloop.first %} active{% endif %}" data-question="{{ forloop.counter }}">
+      <div class="question-container">
+        <h2 class="question-text">{{ question.text }}</h2>
+      </div>
+      {% if question.image %}
+      <img src="{{ question.image.url }}" alt="{{ question.text }}" class="quiz-image" style="max-width: 300px;">
+      {% endif %}
+      <ul class="answer-list">
+        <li><input type="radio" id="answer_{{ question.id }}_1" name="answer_{{ question.id }}" value="{{ question.answer_1 }}" class="answer-input"><label for="answer_{{ question.id }}_1">{{ question.answer_1 }}</label></li>
+        <li><input type="radio" id="answer_{{ question.id }}_2" name="answer_{{ question.id }}" value="{{ question.answer_2 }}" class="answer-input"><label for="answer_{{ question.id }}_2">{{ question.answer_2 }}</label></li>
+        <li><input type="radio" id="answer_{{ question.id }}_3" name="answer_{{ question.id }}" value="{{ question.answer_3 }}" class="answer-input"><label for="answer_{{ question.id }}_3">{{ question.answer_3 }}</label></li>
+        <li><input type="radio" id="answer_{{ question.id }}_4" name="answer_{{ question.id }}" value="{{ question.answer_4 }}" class="answer-input"><label for="answer_{{ question.id }}_4">{{ question.answer_4 }}</label></li>
+      </ul>
+      <div class="button-container">
+        {% if not forloop.first %}
+          <button type="button" class="prev-btn"><i class="fa fa-arrow-left"></i> Précédent</button>
+        {% endif %}
+        {% if not forloop.last %}
+          <button type="button" class="next-btn" disabled>Suivant <i class="fa fa-arrow-right"></i></button>
+        {% else %}
+          <button type="submit" class="submit-btn">Soumettre</button>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+  
+  
+</form>
+  </main>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(function() {
+      // Afficher la première étape de quiz
+      $(".quiz-step:first").addClass("active");
+      updateQuizStatus(); // Ajouter un événement de changement d'entrée pour les réponses
+      $(".answer-input").change(function() {
+        // Activer le bouton "Suivant"
+        $(this).closest(".quiz-step").find(".next-btn").prop("disabled", false);
+      });
+      
+      // Ajouter un événement de clic pour le bouton "Suivant"
+      $(".next-btn").click(function() {
+        // Récupérer l'étape de quiz actuelle
+        var currentStep = $(this).closest(".quiz-step"); 
+        // Désactiver le bouton "Suivant"
+        $(this).prop("disabled", true);
+        
+        // Masquer l'étape actuelle et afficher la suivante
+        currentStep.removeClass("active");
+        currentStep.next(".quiz-step").addClass("active");
+        
+        // Mettre à jour le statut du quiz
+        updateQuizStatus();
+      });
+      
+      // Ajouter un événement de clic pour le bouton "Précédent"
+      $(".prev-btn").click(function() {
+        // Récupérer l'étape de quiz actuelle
+        var currentStep = $(this).closest(".quiz-step");
+        
+        // Masquer l'étape actuelle et afficher la précédente
+        currentStep.removeClass("active");
+        currentStep.prev(".quiz-step").addClass("active");
+        
+        // Mettre à jour le statut du quiz
+        updateQuizStatus();
+      });
+      
+      // Mettre à jour le statut du quiz
+      function updateQuizStatus() {
+        var currentQuestion = $(".quiz-step.active").data("question");
+        var totalQuestions = $(".quiz-step").length;
+        $(".quiz-status").text("Question " + currentQuestion + " sur " + totalQuestions); // Masquer le bouton "Précédent" pour la première question
+        if (currentQuestion == 1) {
+          $(".prev-btn").hide();
+        } else {
+          $(".prev-btn").show();
+        }
+        
+        // Masquer le bouton "Suivant" pour la dernière question
+        if (currentQuestion == totalQuestions) {
+          $(".next-btn").hide();
+        } else {
+          $(".next-btn").show();
+        }
+      }
+    });
+      </script>
+      <script>
+        // Convertir la durée du quiz en secondes
+var quizDuration = {{ quiz.duration }} * 60;
+var timeLeft = quizDuration;
+
+// Afficher le chronomètre initial
+updateTimer();
+
+// Démarrer le décompte
+var countdown = setInterval(function() {
+  timeLeft--;
+
+  // Mettre à jour l'affichage du chronomètre
+  updateTimer();
+
+  // Vérifier si le temps est écoulé
+  if (timeLeft <= 0) {
+    clearInterval(countdown);
+    submitQuiz();
+  }
+}, 1000);
+
+// Mettre à jour l'affichage du chronomètre
+function updateTimer() {
+  var minutes = Math.floor(timeLeft / 60);
+  var seconds = timeLeft % 60;
+  $('#timer').text(minutes + ':' + (seconds < 10 ? '0' : '') + seconds);
+}
+
+// Soumettre le quiz
+function submitQuiz() {
+  $('#quiz-form').submit();
+}
+
+      </script>
+    </body>
+    </html>
+  </body>
+  </html>    

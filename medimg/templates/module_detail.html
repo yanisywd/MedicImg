@@ -1,0 +1,111 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #1a1a1a;
+    }
+
+    h1, h2 {
+        color: #ccc;
+    }
+
+    .module-name {
+        font-size: 3rem;
+        font-weight: bold;
+    }
+
+    .category-title {
+        font-size: 2rem;
+        text-transform: uppercase;
+        border-bottom: 2px solid #ccc;
+        margin-bottom: 1rem;
+    }
+
+    .list-group-item {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-color: rgba(0, 0, 0, 0.25);
+        transition: all 0.3s ease;
+    }
+
+    .list-group-item:hover {
+        background-color: rgba(0, 0, 0, 0.2);
+        transform: scale(1.05);
+    }
+{% comment %} avant le curseur  {% endcomment %}
+    .list-group-item a {
+        color: #000000;
+    }
+{% comment %} la couleur apres avoir mis le curseur de la souris  {% endcomment %}
+    .list-group-item a:hover {
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .badge {
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const listItemLinks = document.querySelectorAll(".list-group-item a");
+
+        listItemLinks.forEach(link => {
+            link.addEventListener("mouseenter", () => {
+                link.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.3)";
+            });
+
+            link.addEventListener("mouseleave", () => {
+                link.parentElement.style.backgroundColor = "rgba(0, 0, 0, 0.1)";
+            });
+        });
+    });
+</script>
+
+<main class="container">
+    <div class="row mt-5">
+        <div class="col">
+            <h1 class="text-center module-name">{{ module_name }}</h1>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h2 class="category-title">Quiz</h2>
+            <ul class="list-group">
+                {% for quiz in quizzes %}
+                <li class="list-group-item">
+                    <a href="{% url 'startquiz' quiz.pk %}" class="text-decoration-none">
+                        {{ quiz.name }}
+                    </a>
+                    <span class="badge bg-primary rounded-pill">{{ quiz.questions.count }} questions</span>
+                    <span class="badge bg-primary rounded-pill">durée:{{ quiz.duration }}min </span>
+                </li>
+                {% empty %}
+                <li class="list-group-item">Aucun quiz pour ce module.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <h2 class="category-title">Documents</h2>
+            <ul class="list-group">
+                {% for document in documents %}
+                <li class="list-group-item">
+                    <a href="{{ document.file.url }}" target="_blank" class="text-decoration-none">
+                        {{ document.title }}
+                    </a>
+                    <span class="badge bg-info rounded-pill">{{ document.file.size|filesizeformat }}</span>
+                </li>
+                {% empty %}
+                <li class="list-group-item">Aucun document pour ce module.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

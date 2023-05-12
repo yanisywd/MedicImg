@@ -1,0 +1,221 @@
+{% extends 'basic.html' %}
+{% load static %}
+{% block content %}
+<style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  
+    .module-menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 20px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+  
+    .module-menu h4 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #444;
+    }
+  
+    .module-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  
+    .module-button {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 200px;
+      height: 200px;
+      margin: 10px;
+      border-radius: 50%;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease-in-out;
+      background-size: cover;
+      background-position: center;
+    }
+  
+    .module-button:hover {
+      transform: scale(1.05);
+    }
+  
+    .module-button span {
+      position: absolute;
+      z-index: 1;
+      text-align: center;
+      width: 100%;
+    }
+  
+    .module-button:before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 50%;
+      transition: background 0.5s ease-in-out;
+    }
+  
+    .module-button:hover:before {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  
+    .module-button.radiographie {
+        background-image: url("{% static 'assets/img/icons/flags/radio.jpg' %}");    }
+  
+    .module-button.tomodensitometrie {
+        background-image: url("{% static 'assets/img/icons/flags/tomo.jpg' %}");    }
+  
+    .module-button.irm {
+        background-image: url("{% static 'assets/img/icons/flags/irm.jpg' %}");    }
+  
+    .module-button.echographie {
+        background-image: url("{% static 'assets/img/icons/flags/echo.png' %}");    }
+  
+    .module-button.scintigraphie {
+        background-image: url("{% static 'assets/img/icons/flags/sn.jpg' %}");    }
+  
+    .module-button.angiographie {
+        background-image: url("{% static 'assets/img/icons/flags/an.jpg' %}");    }
+  </style>
+  
+  <main class="main-content border-radius-lg">
+    <div class="module-menu">
+        <p class="texte-personnalise" id="texte"></p>
+      <div class="module-buttons">
+        <a href="{% url 'module_detail' 'Radiographie' %}" class="module-button radiographie">
+          <span>Radiographie</span>
+        </a>
+        <a href="{% url 'module_detail' 'Tomodensitométrie' %}" class="module-button tomodensitometrie">
+          <span>Tom
+            <a href="{% url 'module_detail' 'IRM' %}" class="module-button irm">
+                <span>IRM</span>
+              </a>
+              <a href="{% url 'module_detail' 'Échographie' %}" class="module-button echographie">
+                <span>Échographie</span>
+              </a>
+              <a href="{% url 'module_detail' 'Scintigraphie' %}" class="module-button scintigraphie">
+                <span>Scintigraphie</span>
+              </a>
+              <a href="{% url 'module_detail' 'Angiographie' %}" class="module-button angiographie">
+                <span>Angiographie</span>
+              </a>
+            </div>
+              </div>
+            </main>  
+  <!-- Ajoutez cette section après la section .module-menu -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+
+  <style>
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .module-list {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+    }
+  
+    .module-btn {
+      margin-bottom: 0.5rem;
+    }
+  
+    .widget {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+    }
+  
+    .table-container {
+      width: 50%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      border-radius: 10px;
+    }
+    
+  </style>
+	<style>
+		#texte {
+			opacity: 1;
+			transition: opacity 1s ease-in-out;
+		}
+
+		#texte.fade-out {
+			opacity: 0;
+		}
+	</style>
+    <style>
+		.texte-personnalise {
+			font-family: 'Montserrat', sans-serif; /* remplacez "Montserrat" par le nom de la police de votre choix */
+			font-size: 24px; /* taille de la police */
+			font-weight: 500; /* épaisseur de la police */
+			color: #333; /* couleur du texte */
+			line-height: 1.5; /* espacement entre les lignes */
+			text-align: center; /* alignement du texte */
+		}
+	</style>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	
+<script>
+    var texteComplet = "Choissisez le module que vous voulez apprendre !  ";
+    var index = 0;
+    var vitesse = 90; // réglage de la vitesse de frappe (en millisecondes)
+
+    function ecrireLettre() {
+        document.getElementById("texte").innerHTML += texteComplet.charAt(index);
+        index++;
+        if (index >= texteComplet.length) {
+            index = 0;
+            setTimeout(function() {
+                document.getElementById("texte").classList.add("fade-out");
+                setTimeout(function() {
+                    document.getElementById("texte").classList.remove("fade-out");
+                    document.getElementById("texte").innerHTML = "";
+                    ecrireLettre();
+                }, 1000);
+            }, 1000);
+        } else {
+            setTimeout(ecrireLettre, vitesse);
+        }
+    }
+
+    ecrireLettre();
+</script>
+  
+  <style>
+    .table-wrapper {
+        position: relative;
+    }
+
+    .centered-title {
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>
+
+  
+{% endblock %}
+
+  

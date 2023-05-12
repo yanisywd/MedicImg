@@ -1,0 +1,110 @@
+{% extends 'basic.html' %}
+{% load static %}
+{% block content %}
+
+<main class="main-content border-radius-lg" id="main-content" onload="setReloadOnBack()">
+    <h1>Quizzes</h1>
+    {% if quiz_notes %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Quiz</th>
+                    <th>Professeur</th>
+                    <th>Durée</th>
+                    <th>Module</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quiz, submitted in quiz_status %}
+                <tr>
+                    <td>
+                        {% if submitted %}
+                            <span style="color: green; font-weight: bold;">Quiz terminé:</span> {{ quiz.name }}
+                        {% else %}
+                            <a href="{% url 'startquiz' quiz.pk %}" style="text-decoration: none;">
+                                <button class="quiz-btn" data-quiz-name="{{ quiz.name }}"> {{ quiz.name }} </button>
+                            </a>
+                        {% endif %}
+                    </td>
+                    {# Commentez ou supprimez temporairement les éléments suivants si vous ne voulez pas les afficher #}
+                     <td>{{ quiz.professeur.username }}</td>
+                    <td>{{ quiz.duration }} minutes</td>
+                    <td>{{ quiz.module }}</td>
+                    <td>
+                        {% if notes %}
+                            <ul>
+                                {% for etudiant, note in notes.items %}
+                                    <li>{{ etudiant.name }}: {{ note }}</li>
+                                    
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            Pas de notes pour ce quiz.
+                        {% endif %}
+                    </td> 
+                </tr>
+            {% endfor %}
+            
+                    </td>
+                </tr>
+                
+           
+            </tbody>
+        </table>
+    {% else %}
+        <p>No quizzes yet.</p>
+    {% endif %}
+
+
+    <script>
+        function setReloadOnBack() {
+            window.addEventListener("pageshow", function(event) {
+                if (event.persisted) {
+                    // Recharger la page lorsque l'utilisateur revient en arrière
+                    location.reload();
+                }
+            });
+        }
+        
+        const quizButtons = document.querySelectorAll('.quiz-btn');
+        quizButtons.forEach(button => {
+            button.addEventListener('mouseover', () => {
+                const quizName = button.dataset.quizName;
+                button.textContent = `Démarrer le quiz ${quizName}`;
+            });
+            button.addEventListener('mouseout', () => {
+                const quizName = button.dataset.quizName;
+                button.textContent = quizName;
+            });
+        });
+    </script>
+</main>
+
+<style>
+    .quiz-box {
+        background-color: #f2f2f2;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-right: 150px;
+        margin-bottom: 10px;
+    }
+
+    .quiz-btn {
+        cursor: pointer;
+        background-color: #007bff;
+        border: 1px solid #007bff;
+        color: #fff;
+        border-radius: 5px;
+        padding: 5px 10px;
+        transition: all 0.5s; /* Transition légèrement plus lente */
+    }
+
+    .quiz-btn:hover {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+</style>
+
+{% endblock %}

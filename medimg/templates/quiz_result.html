@@ -1,0 +1,54 @@
+{% extends 'basic.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .result-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+    }
+</style>
+
+<main class="main-content border-radius-lg result-container">
+    <h1>{{ quiz.name }}</h1>
+    <p>Votre score : {{ score }}/{{ total_points }}</p>
+    <p class="message" style="display: none;">{{ message }}</p>
+    <a href="{% url 'menu_etudiant' %}" class="back-to-menu-btn">Revenir au menu</a>
+</main>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('.message').slideDown('slow');
+});
+</script>
+<style>
+    /* Styles du bouton 'Revenir au menu' */
+    .back-to-menu-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        text-decoration: none;
+        color: white;
+        border-radius: 50px;
+        background: linear-gradient(90deg, rgba(92, 39, 251, 1) 0%, rgba(112, 71, 247, 1) 100%);
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .back-to-menu-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 6px rgba(50, 50, 93, 0.15), 0 3px 3px rgba(0, 0, 0, 0.1);
+    }
+    .back-to-menu-btn:hover {
+        color: white; /* Choisissez la couleur souhaitée pour le texte lors du survol */
+    }
+    
+</style>
+{% endblock %}

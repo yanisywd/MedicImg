@@ -1,0 +1,185 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .points-green {
+      color: #4CAF50; /* vert flashy */
+  }
+  </style>
+<main class="main-content border-radius-lg">
+    <div class="row">
+      <div class="col-md-5">
+        <h3>Ajouter une Question a {{ quiz.name }}</h3>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="{{ form.image.id_for_label }}">Question Image</label>
+            {{ form.image }}
+            {% if form.image.errors %}
+              {% for error in form.image.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+              {% endfor %}
+            {% else %}
+            <br>
+            <small id="error-msg" class="text-danger"></small>
+            {% endif %}
+          </div>
+          
+          <div class="form-group">
+            <label for="{{ form.text.id_for_label }}">Question Text</label>
+            {{ form.text }}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.points.id_for_label }}">Points</label>
+            {{ form.points }}
+          </div>
+          <div class="form-group" id="answer-1">
+            <label for="{{ form.answer_1.id_for_label }}">Answer 1</label>
+            {{ form.answer_1 }}
+            <input type="radio" id="{{ form.correct_answer.id_for_label }}_1" name="{{ form.correct_answer.name }}" value="{{ form.answer_1.value }}" />
+            <label for="{{ form.correct_answer.id_for_label }}_1">Correct Answer</label>
+          </div>
+          <div class="form-group" id="answer-2" style="display:none;">
+            <label for="{{ form.answer_2.id_for_label }}">Answer 2</label>
+            {{ form.answer_2 }}
+            <input type="radio" id="{{ form.correct_answer.id_for_label }}_2" name="{{ form.correct_answer.name }}" value="{{ form.answer_2.value }}" />
+            <label for="{{ form.correct_answer.id_for_label }}_2">Correct Answer</label>
+          </div>
+          <div class="form-group" id="answer-3" style="display:none;">
+            <label for="{{ form.answer_3.id_for_label }}">Answer 3</label>
+            {{ form.answer_3 }}
+            <input type="radio" id="{{ form.correct_answer.id_for_label }}_3" name="{{ form.correct_answer.name }}" value="{{ form.answer_3.value }}" />
+            <label for="{{ form.correct_answer.id_for_label }}_3">Correct Answer</label>
+          </div>
+          <div class="form-group" id="answer-4" style="display:none;">
+            <label for="{{ form.answer_4.id_for_label }}">Answer 4</label>
+            {{ form.answer_4 }}
+            <input type="radio" id="{{ form.correct_answer.id_for_label }}_4" name="{{ form.correct_answer.name }}" value="{{ form.answer_4.value }}" />
+            <label for="{{ form.correct_answer.id_for_label }}_4">Correct Answer</label>
+          </div>
+          <button type="button" id="show-answer">ajouter une reponse</button>
+          <button type="button" id="hide-answer" style="display:none;">masquer la reponse</button>
+          
+          
+          <button type="submit">enregistrer la question</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <h3>Questions</h3>
+        
+        <div class="row">
+          {% for question in questions %}
+          <div class="col-md-6 mb-4">
+              <div class="card">
+                <div class="card-header">{{ question.text }} - <h7 class="points-green">{{ question.points }} points</h7></div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <img src="{{ question.image.url }}" alt="{{ question.text }}" class="img-fluid">
+                    </div>
+                    <div class="col-md-6">
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item{% if question.correct_answer == answer %} bg-success text-white{% endif %}">
+                          {{ question.answer_1 }}{% if question.correct_answer == question.answer_1 %} <span class="ml-2">&#x2705;</span>{% endif %}
+                        </li>
+                        <li class="list-group-item{% if question.correct_answer == answer %} bg-success text-white{% endif %}">
+                          {{ question.answer_2 }}{% if question.correct_answer == question.answer_2 %} <span class="ml-2">&#x2705;</span>{% endif %}
+                        </li>
+                        <li class="list-group-item{% if question.correct_answer == answer %} bg-success text-white{% endif %}">
+                          {{ question.answer_3 }}{% if question.correct_answer == question.answer_3 %} <span class="ml-2">&#x2705;</span>{% endif %}
+                        </li>
+                        <li class="list-group-item{% if question.correct_answer == answer %} bg-success text-white{% endif %}">
+                          {{ question.answer_4 }}{% if question.correct_answer == question.answer_4 %} <span class="ml-2">&#x2705;</span>{% endif %}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <form action="{% url 'delete_question' question.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger delete-question" data-question-id="{{ question.id }}">Delete</button>
+                         
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          {% endfor %}
+        </div>
+      </main>
+      
+      
+     
+        
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+      $(document).ready(function() {
+        var answerCounter = 1;
+      
+        $("#show-answer").click(function() {
+          $("#answer-" + answerCounter).show();
+          if (answerCounter > 1) {
+            $("#hide-answer").show();
+          }
+          answerCounter++;
+          if (answerCounter > 4) {
+            $("#show-answer").hide();
+          }
+        });
+      
+        $("#hide-answer").click(function() {
+          answerCounter--;
+          $("#answer-" + answerCounter).hide();
+          if (answerCounter === 1) {
+            $("#hide-answer").hide();
+          }
+          $("#show-answer").show();
+        });
+      });
+     
+      </script>
+      <script>
+        $('form').on('submit', function(event) {
+          var imageInput = $('input[name="image"]');
+          var errorMessage = $('#error-msg');
+          if (!imageInput.val()) {
+            event.preventDefault();
+            errorMessage.text('L\'image est obligatoire.');
+          }
+        });
+      </script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).on('click', '.delete-question', function(event) {
+    event.preventDefault();
+    var questionId = $(this).data('question-id');
+    $.ajax({
+      type: 'POST',
+      url: '/delete/' + questionId + '/',
+      data: {
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+      },
+      success: function(response) {
+        location.reload();
+        
+      },
+      error: function(xhr, status, error) {
+        console.log(error);
+      }
+    });
+  });
+</script>
+
+      
+      
+          
+      
+        
+     
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

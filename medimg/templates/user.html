@@ -1,0 +1,167 @@
+{% extends 'basic.html' %} {% load static %} {% block content %}
+
+<main class="main-content">
+    {% if request.user.etudiant %}
+    <div class="container">
+      <div class="row justify-content-center align-items-end">
+        <div class="col-lg-6 col-md-8">
+          <h4 class="text-center mb-4 animated fadeInDown">Mon profil</h4>
+          <div class="box profile-box animated fadeInLeft">
+            <div class="profile-image">
+              {% if request.user.etudiant.profile_pic %}
+                <img src="{{ request.user.etudiant.profile_pic.url }}" alt="Profile Picture" class="profile-pic" style="width: 20%; height: 20%;">
+              {% else %}
+                <img src="https://via.placeholder.com/150" alt="Profile Picture Placeholder">
+              {% endif %}
+            </div>
+            <div class="profile-info">
+              <h1>{{ request.user.etudiant.name }}</h1>
+              <p class="profile-contact">{{ request.user.etudiant.email }}</p>
+              <p class="profile-contact">{{ request.user.etudiant.phone }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-8">
+          <div class="box form-box animated fadeInRight">
+            <div class="profile-form">
+              <form method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="enregistrer les modifications" class="btn btn-primary" 
+                  style="background-image: linear-gradient(to right, #f80759, #bc4e9c); 
+                  -webkit-text-fill-color: transparent;
+                  -webkit-background-clip: text;
+                  -moz-background-clip: text;
+                  -ms-background-clip: text;
+                  -o-background-clip: text;
+                  background-clip: text;">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="container">
+        <div class="row justify-content-center align-items-end">
+          <div class="col-lg-6 col-md-8">
+            <h4 class="text-center mb-4 animated fadeInDown">Mon profil</h4>
+            <div class="box profile-box animated fadeInLeft">
+              <div class="profile-image">
+                {% if request.user.professeur.profile_pic %}
+                  <img src="{{ request.user.professeur.profile_pic.url }}" alt="Profile Picture" class="profile-pic" style="width: 20%; height: 20%;">
+                {% else %}
+                  <img src="https://via.placeholder.com/150" alt="Profile Picture Placeholder">
+                {% endif %}
+              </div>
+              <div class="profile-info">
+                <h1>{{ request.user.professeur.name }}</h1>
+                <p class="profile-contact">{{ request.user.professeur.email }}</p>
+                <p class="profile-contact">{{ request.user.professeur.phone }}</p>
+                <p class="profile-contact">{{ request.user.professeur.module }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-8">
+            <div class="box form-box animated fadeInRight">
+              <div class="profile-form">
+               
+                <form method="post" action="" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <input type="submit" value="enregistrer les modifications" class="btn btn-primary" 
+                    style="background-image: linear-gradient(to right, #f80759, #bc4e9c); 
+                    -webkit-text-fill-color: transparent;
+                    -webkit-background-clip: text;
+                    -moz-background-clip: text;
+                    -ms-background-clip: text;
+                    -o-background-clip: text;
+                    background-clip: text;">
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+      </main>
+      <style>
+        .box {
+          border: 1px solid #ccc;
+          padding: 10px;
+          margin-bottom: 20px;
+          width: 100%;
+          background-color: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border-radius: 10px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-pic {
+          max-width: 100%;
+          height: auto;
+          border-radius: 50%;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+      
+        .form-box {
+          padding: 10px;
+        }
+      
+        .profile-box {
+          padding: 10px;
+        }
+    
+        .animated {
+          animation-duration: 1s;
+          animation-fill-mode: both;
+        }
+        
+        @keyframes fadeInDown {
+          0% {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .fadeInDown {
+          animation-name: fadeInDown;
+        }
+    
+        @keyframes fadeInLeft {
+          0% {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        .fadeInLeft {
+          animation-name: fadeInLeft;
+        }
+    
+        @keyframes fadeInRight {
+          0% {
+            opacity: 0;
+            transform: translateX(20px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        .fadeInRight {
+          animation-name: fadeInRight;
+        }
+      </style>
+    {% endblock %}
+    
+    

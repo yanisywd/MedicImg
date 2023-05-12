@@ -1,0 +1,33 @@
+<!--
+=========================================================
+* Material Dashboard 2 - v3.0.4
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/material-dashboard
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+{%extends 'basic.html' %} {% load static %} {% block content %}
+
+<main class="main-content border-radius-lg">
+  <!-- Navbar -->
+
+  <!-- End Navbar -->
+
+  <div class="container-fluid py-4">
+    <h6>{{page.title}}</h6>
+    <p>{{page.detail}}</p>
+    <!--div row here -->
+
+    {% comment %} {% for banner in banners %}
+    <img src="{{banner.img.url}}" alt="" class="img-thumbnail" />
+    {% endfor %} {% endcomment %}
+  </div>
+</main>
+
+{% endblock %}

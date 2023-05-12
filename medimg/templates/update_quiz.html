@@ -1,0 +1,14 @@
+{% extends 'basic.html' %} 
+{% load static %} 
+{% block content %}
+
+<main class="main-content border-radius-lg p-3">
+    <h2 class="mb-4">Modifier Quiz</h2>
+    <form method="post" class="border p-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Enregistrer</button>
+    </form>
+</main>
+
+{% endblock %}

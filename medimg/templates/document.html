@@ -1,0 +1,32 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2 class="mt-5 mb-3">Ajouter un document</h2>
+    <form method="POST" enctype="multipart/form-data" class="mb-5 border p-3">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form.as_p }}
+      </div>
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </form>
+
+    <h4 class="mb-3">Liste des documents que vous avez ajouté</h4>
+    <ul class="list-group mb-5">
+      {% for document in documents %}
+        <li class="list-group-item border-0">
+          <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+            <div>
+              <h5 class="mb-0">{{ document.title }}</h5>
+              <small class="text-muted">{{ document.module }} - {{ document.uploaded_by.name }}</small>
+            </div>
+            <div>
+              <a href="{{ document.file.url }}" class="btn btn-sm btn-primary mr-2">Télécharger</a>
+              <a href="{% url 'document_delete' document.pk %}" class="btn btn-sm btn-danger">Supprimer</a>
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
