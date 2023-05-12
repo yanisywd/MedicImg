@@ -14,7 +14,8 @@ here are some screenshots of the platform
 How to start
 Prerequisites
  Python 3.8
- Django 3.2
+ Django 4.1.7
+ postgresql
 
 Facility
 Clone repository: git clone https://github.com/yanisywd/MedicImg.git
