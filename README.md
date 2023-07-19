@@ -8,10 +8,11 @@ Students can access these materials to study and take quizzes created by teacher
 here are some screenshots of the platform
 
 ![menu etudiant avec detail reponses](https://github.com/yanisywd/MedicImg/assets/101108426/2d0e7f40-0207-497b-ba5b-5a7c80fc4db7)
-![ajouter des questions](https://github.com/yanisywd/MedicImg/assets/101108426/9378a06a-8371-4ab5-9001-879cb712f603)
-![ajouter un quiz prof](https://github.com/yanisywd/MedicImg/assets/101108426/775a60cf-423f-484f-8654-ae7d9ad4aa46)
+
+https://github.com/yanisywd/MedicImg/assets/101108426/158f2dd9-584e-45ab-985e-c043140cffd8
 
 How to start
+
 Prerequisites
  Python 3.8
  Django 4.1.7
